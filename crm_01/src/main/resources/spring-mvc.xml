@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--
+       处理静态资源，例如html、js、css、jpg
+      若只设置该标签，则只能访问静态资源，其他请求则无法访问
+      此时必须设置<mvc:annotation-driven/>解决问题
+    -->
+    <mvc:default-servlet-handler/>
+
+
+    <!-- 开启mvc注解驱动 -->
+    <!-- 支持SpringMVC更高级的一些功能，JSR303校验，快捷的ajax...映射动态请求 -->
+    <mvc:annotation-driven/>
+
+    <!-- SpringMVC的配置文件，包含网站跳转逻辑的控制，配置 -->
+    <!-- 自动扫描包,关闭默认扫描所有包，直扫描Controller组件 -->
+    <!--<context:component-scan base-package="com.pj.ssm.crm.web.controller" use-default-filters="false">-->
+        <!--<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
+    <!--</context:component-scan>-->
+    <context:component-scan base-package="com.pj.ssm.crm.settings.web.controller"/>
+    <context:component-scan base-package="com.pj.ssm.crm.web.controller"/>
+    <context:component-scan base-package="com.pj.ssm.crm.workbench.web.controller"/>
+    <!-- 给一个用来测试测试的controller包 -->
+    <context:component-scan base-package="com.pj.ssm.crm.commons.testController"/>
+    <!--<context:property-placeholder location="classpath:properties/jdbc.properties"/>-->
+    <!--<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">-->
+    <!--<property name="driverClassName" value="${jdbc.driverClassName}"/>-->
+    <!--<property name="url" value="${jdbc.url}"/>-->
+    <!--<property name="username" value="${jdbc.username}"/>-->
+    <!--<property name="password" value="${jdbc.password}"/>-->
+    <!--</bean>-->
+    <!--<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">-->
+    <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--</bean>-->
+    <!--设置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--设置需要拦截的请求-->
+            <mvc:mapping path="/settings/**"/>
+            <mvc:mapping path="/workbench/**"/>
+            <!--排除拦截的请求：排除拦截的优先级更高-->
+            <mvc:exclude-mapping path="/settings/qx/user/toLogin.do"/>
+            <mvc:exclude-mapping path="/settings/qx/user/login.do"/>
+            <bean class="com.pj.ssm.crm.settings.web.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+        <!--<mvc:interceptor>-->
+            <!--&lt;!&ndash;设置需要拦截的请求&ndash;&gt;-->
+            <!--<mvc:mapping path="/settings/qx/user/toLogin.do"/>-->
+            <!--<mvc:mapping path="/settings/qx/user/login.do"/>-->
+            <!--<bean class="com.pj.ssm.crm.settings.web.interceptor.LoginInterceptorSupply"/>-->
+        <!--</mvc:interceptor>-->
+    </mvc:interceptors>
+    <!-- 配置文件上传解析器 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 最大上传大小 -->
+        <property name="maxUploadSize" value="#{1024*1024*5}"/>
+        <property name="defaultEncoding" value="utf-8"/>
+    </bean>
+    <!--<mvc:view-controller path="/" view-name="index"/>-->
+    <!--<mvc:view-controller path="/list" view-name="pages/list"/>-->
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/" />
+        <property name="suffix" value=".jsp" />
+        <property name="order" value="1" />
+    </bean>
+    <!-- 配置Thymeleaf视图解析器 -->
+    <bean id="templateResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+        <property name="order" value="2"/>
+        <property name="characterEncoding" value="UTF-8"/>
+        <property name="templateEngine">
+            <bean class="org.thymeleaf.spring5.SpringTemplateEngine">
+                <property name="templateResolver">
+                    <bean class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+
+                        <!-- 视图前缀 -->
+                        <property name="prefix" value="/WEB-INF/pages/"/>
+
+                        <!-- 视图后缀 -->
+                        <property name="suffix" value=".html"/>
+                        <property name="templateMode" value="HTML5"/>
+                        <property name="characterEncoding" value="UTF-8"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>
