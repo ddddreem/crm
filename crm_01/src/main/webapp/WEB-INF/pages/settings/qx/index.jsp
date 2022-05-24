@@ -62,7 +62,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
             var oldPwd = $.trim($("#oldPwd").val());
             var confirmPwd =  $.trim($("#confirmPwd").val());
             if(newPwd != confirmPwd){
-                alert("新密码与确认密码不一致...")
+                alert("新密码与确认密码不一致...");
                 return ;
             }
             $.ajax({
