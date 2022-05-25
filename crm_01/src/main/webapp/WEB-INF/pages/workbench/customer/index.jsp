@@ -212,6 +212,36 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                     }
 				});
             });
+
+			// 为删除按钮绑定单击事件
+			$("#deleteCustomerBtn").click(function () {
+				var checkedList = $("#customersTBody input[type='checkbox']:checked");
+                if(checkedList.size() == 0){
+                    alert("至少删除一条线索...");
+                    return ;
+                }
+                if(window.confirm("是否要删除这" + checkedList.size() + "条记录？")) {
+                    var ids = "";
+                    $.each(checkedList, function (index, obj) {
+                        ids += "id=" + obj.value + "&";
+                    });
+                    ids = ids.substring(0, ids.length - 1);
+                    $.ajax({
+                        url:'',
+                        type:'post',
+                        data:ids,
+                        dataType:'json',
+                        success:function (data) {
+                            if(data.code == '1'){
+                                alert("共有" + data.extend.count + "条记录受影响");
+                                queryAllCustomersByCondition(1, $("#customerNavi").bs_pagination('getOption', 'rowsPerPage'));
+                            }else{
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }
+            });
         });
 
 	</script>

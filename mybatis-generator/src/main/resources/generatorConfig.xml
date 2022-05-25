@@ -89,6 +89,12 @@
                <!--selectByExampleQueryId="false">-->
         <!--</table>-->
 
+        <!--<table tableName="tbl_customer_contacts_relation" domainObjectName="CustomerContactsRelation"-->
+               <!--enableCountByExample="false" enableUpdateByExample="false"-->
+               <!--enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+        <!--</table>-->
+
         <!--<table tableName="tbl_clue_remark" domainObjectName="ClueRemark"-->
                <!--enableCountByExample="false" enableUpdateByExample="false"-->
                <!--enableDeleteByExample="false" enableSelectByExample="false"-->
