@@ -227,7 +227,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			    var name = $("create-name").val();
 			    var name = $("create-name").val();
 			    var name = $("create-name").val();
-			    var name = $("create-name").val();
 
             });
         });
