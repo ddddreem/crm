@@ -87,4 +87,9 @@ public interface CustomerMapper {
      * 根据修改的条件修改客户信息
      */
     int updateCustomerByModifiedCustomer(Customer modifiedCustomer);
+
+    /**
+     * 根据客户id数组删除客户信息
+     */
+    int deleteCustomersByCustomerIds(String[] id);
 }

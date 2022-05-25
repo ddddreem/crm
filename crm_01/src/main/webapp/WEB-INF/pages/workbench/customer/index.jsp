@@ -229,6 +229,36 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			    var name = $("create-name").val();
 
             });
+
+			// 为删除按钮绑定单击事件
+			$("#deleteCustomerBtn").click(function () {
+				var checkedList = $("#customersTBody input[type='checkbox']:checked");
+                if(checkedList.size() == 0){
+                    alert("至少删除一条线索...");
+                    return ;
+                }
+                if(window.confirm("是否要删除这" + checkedList.size() + "条记录？")) {
+                    var ids = "";
+                    $.each(checkedList, function (index, obj) {
+                        ids += "id=" + obj.value + "&";
+                    });
+                    ids = ids.substring(0, ids.length - 1);
+                    $.ajax({
+                        url:'',
+                        type:'post',
+                        data:ids,
+                        dataType:'json',
+                        success:function (data) {
+                            if(data.code == '1'){
+                                alert("共有" + data.extend.count + "条记录受影响");
+                                queryAllCustomersByCondition(1, $("#customerNavi").bs_pagination('getOption', 'rowsPerPage'));
+                            }else{
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }
+            });
         });
 
 	</script>
@@ -246,7 +276,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					<h4 class="modal-title" id="myModalLabel1">创建客户</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form" id="createNewCusForm">
+					<form class="form-horizontal" role="form">
 					
 						<div class="form-group">
 							<label for="create-customerOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
@@ -311,7 +341,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" id="saveCreateCusBtn">保存</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
 				</div>
 			</div>
 		</div>

@@ -283,4 +283,11 @@
       address = #{address}
     where id = #{id}
   </update>
+  <delete id="deleteCustomersByCustomerIds" parameterType="java.lang.String">
+    delete from tbl_customer
+    where id in
+    <foreach collection="array" separator="," open="(" close=")" item="id">
+      #{id}
+    </foreach>
+  </delete>
 </mapper>

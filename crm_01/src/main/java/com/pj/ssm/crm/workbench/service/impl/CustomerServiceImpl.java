@@ -39,4 +39,15 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.updateCustomerByModifiedCustomer(modifiedCustomer);
     }
 
+    @Override
+    public void deleteCustomersByCustomerIds(String[] ids) {
+        // 删除联系人与客户关系
+        // 删除与客户关联的联系人
+        // 删除客户的备注
+        // 删除联系人备注
+        // 删除所关联的交易
+        // 删除交易中的历史
+        // 删除交易中的备注
+    }
+
 }
