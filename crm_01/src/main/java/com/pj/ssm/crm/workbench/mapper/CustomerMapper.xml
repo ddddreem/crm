@@ -263,4 +263,24 @@
     insert into tbl_customer(id, owner, name, create_by, create_time, description, contact_summary, next_contact_time)
     values(#{id}, #{owner}, #{name}, #{createBy}, #{createTime}, #{description}, #{contactSummary}, #{nextContactTime})
   </insert>
+  <select id="selectCustomerForEditByCustomerId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+        id, owner, name, website, phone, contact_summary, next_contact_time, description, address
+    from tbl_customer
+    where id = #{customerId}
+  </select>
+  <update id="updateCustomerByModifiedCustomer" parameterType="com.pj.ssm.crm.workbench.domain.Customer">
+    update tbl_customer
+    set owner = #{owner},
+      name = #{name},
+      website = #{website},
+      phone = #{phone},
+      edit_by = #{editBy},
+      edit_time = #{editTime},
+      contact_summary = #{contactSummary},
+      next_contact_time = #{nextContactTime},
+      description = #{description},
+      address = #{address}
+    where id = #{id}
+  </update>
 </mapper>

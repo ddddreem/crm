@@ -12,4 +12,6 @@ import java.util.List;
 public interface CustomerService {
     List<Customer> queryAllCustomers(Customer conditionCustomer);
     List<String> queryAllCustomerName(String customerName);
+    Customer queryCustomerForEditByCustomerId(String customerId);
+    int updateCustomerByModifiedCustomer(Customer modifiedCustomer);
 }

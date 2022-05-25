@@ -109,6 +109,109 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                 queryAllCustomersByCondition(1, $("#customerNavi").bs_pagination('getOption', 'rowsPerPage'));
             });
 
+            // 设置日历插件
+			$(".timeSelecter").datetimepicker({
+                language:'zh-CN', // 语言
+                format:'yyyy-mm-dd', // 日期的格式
+                minView:'month', // 可以选择的最小视图
+                initialDate:new Date(), // 初始化显示的日期
+                autoclose:true, // 设置选择完日期或者时间之后，是否自动关闭日历
+                todayBtn:true, // 设置是否显示"今天"按钮，默认设置为false
+                clearBtn:true, // 设置是否显示"清空"按钮，默认是false
+                pickerPosition:'top-right' // 设置datetimepicker从上面弹出
+			});
+
+            // 为修改客户信息按钮绑定单击事件
+			$("#editCustomerBtn").click(function () {
+				var customerList = $("#customersTBody input[type='checkbox']:checked"); // 这样获取的只是js对象，需要转换成jQuery对象才能使用val()函数
+				if(customerList.size() > 1 || customerList.size() == 0){
+				    alert("请选择一条记录...");
+				    return ;
+				}
+				var customerId = customerList[0].value; // 只有jQuery对象才能使用val()函数，普通的对象只能使用value
+				$.ajax({
+					url:'workbench/customer/queryCustomerForEditByCustomerId.do',
+					type:'post',
+					dataType:'json',
+					data:{
+					    customerId:customerId
+					},
+					success:function (data) {
+                        if (data.code == '1') {
+                            // window.location.href = "workbench/customer/customerIndex.do";
+                            $("#edit-owner").val(data.extend.editCustomer.owner);
+                            $("#edit-name").val(data.extend.editCustomer.name);
+                            $("#edit-website").val(data.extend.editCustomer.website);
+                            $("#edit-phone").val(data.extend.editCustomer.phone);
+                            $("#edit-description").val(data.extend.editCustomer.description);
+                            $("#edit-contactSummary").val(data.extend.editCustomer.contactSummary);
+                            $("#edit-nextContactTime").val(data.extend.editCustomer.nextContactTime);
+                            $("#edit-address").val(data.extend.editCustomer.address);
+                            $("#edit-id").val(customerId);
+                            $("#editCustomerModal").modal("show");
+						}else{
+						    alert(data.msg);
+						}
+                    }
+				});
+            });
+
+			// 为更新按钮绑定单击事件
+			$("#updateCustomerBtn").click(function () {
+				var owner = $("#edit-owner").val();
+			    var name = $.trim($("#edit-name").val());
+			    var website = $.trim($("#edit-website").val());
+			    var phone = $("#edit-phone").val();
+			    var description = $.trim($("#edit-description").val());
+			    var contactSummary = $.trim($("#edit-contactSummary").val());
+				var nextContactTime = $("#edit-nextContactTime").val();
+			    var address = $.trim($("#edit-address").val());
+			    var id = $("#edit-id").val();
+                var websiteReg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/;
+                // 验证座机号码是否合法
+                var phoneReg = /\d{3}-\d{8}|\d{4}-\d{7}/;
+				if(name == ""){
+				    alert("名称不能为空...");
+				    return ;
+				}
+				if(nextContactTime == ""){
+				    alert("下次联系时间不能为空...");
+				    return ;
+				}
+				if(!phoneReg.test(phone)){
+                    alert("联系电话格式有误...(eg:086-11111111)");
+                    return ;
+				}
+                if (!websiteReg.test(website)) {
+                    alert("公司网站格式不正确,请重新输入...(eg:https://gitee.com/dreem_12/ssm-crm)");
+                    return ;
+                }
+                $.ajax({
+					url:'workbench/customer/saveCustomerByModifiedCustomer.do',
+					type:'post',
+					data:{
+					    owner:owner,
+						name:name,
+						website:website,
+						phone:phone,
+						description:description,
+						contactSummary:contactSummary,
+						nextContactTime:nextContactTime,
+						address:address,
+						id:id
+					},
+					dataType:'json',
+					success:function (data) {
+						if(data.code == '1'){
+						    alert("更新成功...");
+                            queryAllCustomersByCondition(1, $("#customerNavi").bs_pagination('getOption', 'rowsPerPage'));
+                            $("#editCustomerModal").modal("hide");
+						}else{
+						    alert(data.msg);
+						}
+                    }
+				});
+            });
         });
 
 	</script>
@@ -171,7 +274,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                             <div class="form-group">
                                 <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="create-nextContactTime">
+                                    <input type="text" class="form-control timeSelecter" id="create-nextContactTime" readonly>
                                 </div>
                             </div>
                         </div>
@@ -180,9 +283,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
                         <div style="position: relative;top: 20px;">
                             <div class="form-group">
-                                <label for="create-address1" class="col-sm-2 control-label">详细地址</label>
+                                <label for="create-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="create-address1"></textarea>
+                                    <textarea class="form-control" rows="1" id="create-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -209,37 +312,37 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form">
-					
+						<input id="edit-id" type="hidden">
 						<div class="form-group">
-							<label for="edit-customerOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="edit-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="edit-customerOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								<select class="form-control" id="edit-owner">
+									<c:forEach items="${users}" var="u">
+										<option value="${u.id}">${u.name}</option>
+									</c:forEach>
 								</select>
 							</div>
-							<label for="edit-customerName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="edit-name" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-customerName" value="动力节点">
+								<input type="text" class="form-control" id="edit-name">
 							</div>
 						</div>
 						
 						<div class="form-group">
                             <label for="edit-website" class="col-sm-2 control-label">公司网站</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-website" value="http://www.bjpowernode.com">
+                                <input type="text" class="form-control" id="edit-website">
                             </div>
 							<label for="edit-phone" class="col-sm-2 control-label">公司座机</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-phone" value="010-84846003">
+								<input type="text" class="form-control" id="edit-phone">
 							</div>
 						</div>
 						
 						<div class="form-group">
-							<label for="edit-describe" class="col-sm-2 control-label">描述</label>
+							<label for="edit-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="edit-describe"></textarea>
+								<textarea class="form-control" rows="3" id="edit-description"></textarea>
 							</div>
 						</div>
 						
@@ -247,15 +350,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
                         <div style="position: relative;top: 15px;">
                             <div class="form-group">
-                                <label for="create-contactSummary1" class="col-sm-2 control-label">联系纪要</label>
+                                <label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="3" id="create-contactSummary1"></textarea>
+                                    <textarea class="form-control" rows="3" id="edit-contactSummary"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="create-nextContactTime2" class="col-sm-2 control-label">下次联系时间</label>
+                                <label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="create-nextContactTime2">
+                                    <input type="text" class="form-control timeSelecter" id="edit-nextContactTime" readonly>
                                 </div>
                             </div>
                         </div>
@@ -264,9 +367,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
                         <div style="position: relative;top: 20px;">
                             <div class="form-group">
-                                <label for="create-address" class="col-sm-2 control-label">详细地址</label>
+                                <label for="edit-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="create-address">北京大兴大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="edit-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -275,7 +378,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+					<button type="button" class="btn btn-primary" id="updateCustomerBtn">更新</button>
 				</div>
 			</div>
 		</div>
@@ -333,9 +436,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createCustomerModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editCustomerModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-primary" id="createCustomerBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-default" id="editCustomerBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-danger" id="deleteCustomerBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 			</div>

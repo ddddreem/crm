@@ -77,4 +77,14 @@ public interface CustomerMapper {
      * 保存创建交易时创建的新客户
      */
     int insertNewCustomerByCreateNewTran(Customer newCustomer);
+
+    /**
+     * 根据客户id查找客户的完整信息
+     */
+    Customer selectCustomerForEditByCustomerId(String customerId);
+
+    /**
+     * 根据修改的条件修改客户信息
+     */
+    int updateCustomerByModifiedCustomer(Customer modifiedCustomer);
 }

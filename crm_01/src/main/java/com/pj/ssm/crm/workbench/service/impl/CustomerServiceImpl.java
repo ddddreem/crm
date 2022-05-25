@@ -29,4 +29,14 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.selectAllCustomersName(customerName);
     }
 
+    @Override
+    public Customer queryCustomerForEditByCustomerId(String customerId) {
+        return customerMapper.selectCustomerForEditByCustomerId(customerId);
+    }
+
+    @Override
+    public int updateCustomerByModifiedCustomer(Customer modifiedCustomer) {
+        return customerMapper.updateCustomerByModifiedCustomer(modifiedCustomer);
+    }
+
 }

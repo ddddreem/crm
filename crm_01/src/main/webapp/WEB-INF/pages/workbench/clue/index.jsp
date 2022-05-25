@@ -137,7 +137,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 // 验证座机号码是否合法
                 var phoneReg = /\d{3}-\d{8}|\d{4}-\d{7}/;
                 // 验证网站是否合法
-                var websiteReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                var websiteReg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/;
                 if (!emailReg.test(email)) {
                     alert("邮箱格式不正确,请重新输入...");
                     return;
@@ -150,10 +150,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     alert("公司座机号码格式不正确,请重新输入...");
                     return;
                 }
-                // if (!websiteReg.test(website)) {
-                //     alert("公司网站格式不正确,请重新输入...");
-                //     return;
-                // }
+                if (!websiteReg.test(website)) {
+                    alert("公司网站格式不正确,请重新输入...");
+                    return;
+                }
                 $.ajax({
                     url: 'workbench/clue/saveCreateClue.do',
                     type: 'post',
