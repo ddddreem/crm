@@ -212,6 +212,24 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                     }
 				});
             });
+
+			// 创建按钮绑定单击事件
+			$("#createCustomerBtn").click(function () {
+				$("#createCustomerModal").modal("show");
+				// 清空创建表单
+				$("#createNewCusForm")[0].reset();
+            });
+
+			// 为创建客户模态框中的保存按钮绑定单击事件
+			$("#saveCreateCusBtn").click(function () {
+				var name = $("create-name").val();
+			    var name = $("create-name").val();
+			    var name = $("create-name").val();
+			    var name = $("create-name").val();
+			    var name = $("create-name").val();
+			    var name = $("create-name").val();
+
+            });
         });
 
 	</script>
@@ -229,7 +247,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					<h4 class="modal-title" id="myModalLabel1">创建客户</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" role="form" id="createNewCusForm">
 					
 						<div class="form-group">
 							<label for="create-customerOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
@@ -294,7 +312,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveCreateCusBtn">保存</button>
 				</div>
 			</div>
 		</div>
